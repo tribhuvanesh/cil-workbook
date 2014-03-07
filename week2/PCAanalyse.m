@@ -5,7 +5,7 @@ function [ mu, lambda, U ] = PCAanalyse( X )
 % Get mean for each of the d rows
 mu = mean(X, 1);
 
-[U, lambda] = eig(X);
+[U, lambda] = eig(cov(X));
 
 end
 

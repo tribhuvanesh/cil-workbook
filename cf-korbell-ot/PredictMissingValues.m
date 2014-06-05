@@ -9,33 +9,44 @@ DIM_F = 100;
 NUM_USERS = size(X, 1);
 NUM_ITEMS = size(X, 2);
 
-GAMMA = 0.001;
-LAMBDA = 1.5;
+GAMMA = 0.005;
+LAMBDA = 0.1;
+NUM_ITER = 2;
+
+SVD_K = 25;
 
 %% Preprocessing
 % Preprocessing stuff
 
 global_mean = mean(X(X ~= nil));
 % Each row contains p_u
-P = rand(NUM_USERS, DIM_F);
+%P = rand(NUM_USERS, DIM_F);
 % Each row contains q_i
-Q = rand(NUM_ITEMS, DIM_F);
+%Q = rand(NUM_ITEMS, DIM_F);
 % Error matrix
 % E = zeros(NUM_USERS, NUM_ITEMS);
 
+% Obtain triplets [user, item, rating]
+[users, items] = find(X ~= nil);
+[X_pred, P, Q] = StandardSVD(X, X, nil);
+Q = Q';
+triplet_matrix = [users, items, X_pred(sub2ind(size(X), users, items))];
+
 %% Perform SGD
 % Perform Stochastic Gradient Descent
-for u=1:NUM_USERS
-    for i=1:NUM_ITEMS
-        if X(u, i) ~= nil
-            e_ui = X(u, i) - Q(i, :)*P(u, :)';
-            temp1 = Q(i, :) + GAMMA * (e_ui*P(u, :) - LAMBDA*Q(i, :));
-            temp2 = P(u, :) + GAMMA * (e_ui*Q(i, :) - LAMBDA*P(u, :));
-            Q(i, :) = temp1;
-            P(u, :) = temp2;
-        end
+for niters=1:NUM_ITER
+    for row=1:size(triplet_matrix, 1)
+        u = triplet_matrix(row, 1);
+        i = triplet_matrix(row, 2);
+        r = triplet_matrix(row, 3);
+
+        e_ui = r - global_mean - P(u, :)*Q(i, :)';
+        temp1 = Q(i, :) + GAMMA * (e_ui*P(u, :) - LAMBDA*Q(i, :));
+        temp2 = P(u, :) + GAMMA * (e_ui*Q(i, :) - LAMBDA*P(u, :));
+        Q(i, :) = temp1;
+        P(u, :) = temp2;
     end
 end
 
-X_pred = P*Q';
-% X_pred(X ~= nil) = X(X ~= nil);
+X_pred = P*Q' + global_mean;
+X_pred(X ~= nil) = X(X ~= nil);

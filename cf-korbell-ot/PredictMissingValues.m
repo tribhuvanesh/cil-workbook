@@ -34,19 +34,25 @@ triplet_matrix = [users, items, X_pred(sub2ind(size(X), users, items))];
 
 %% Perform SGD
 % Perform Stochastic Gradient Descent
+
+bias_users = zeros(NUM_USERS, 1);
+bias_movies = zeros(NUM_ITEMS, 1);
+
 for niters=1:NUM_ITER
     for row=1:size(triplet_matrix, 1)
         u = triplet_matrix(row, 1);
         i = triplet_matrix(row, 2);
         r = triplet_matrix(row, 3);
 
-        e_ui = r - global_mean - P(u, :)*Q(i, :)';
+        e_ui = r - global_mean - P(u, :)*Q(i, :)' - bias_users(u) - bias_movies(i);
         temp1 = Q(i, :) + GAMMA * (e_ui*P(u, :) - LAMBDA*Q(i, :));
         temp2 = P(u, :) + GAMMA * (e_ui*Q(i, :) - LAMBDA*P(u, :));
+        bias_users(u) =  bias_users(u) + GAMMA * (e_ui - LAMBDA * bias_users(u));
+        bias_movies(i) =  bias_movies(i) + GAMMA * (e_ui - LAMBDA * bias_movies(i));
         Q(i, :) = temp1;
         P(u, :) = temp2;
     end
 end
 
-X_pred = P*Q' + global_mean;
+X_pred = P*Q' + global_mean + repmat(bias_users, 1, NUM_ITEMS) + repmat(bias_movies', NUM_USERS, 1);
 X_pred(X ~= nil) = X(X ~= nil);

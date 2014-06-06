@@ -10,8 +10,9 @@ NUM_USERS = size(X, 1);
 NUM_ITEMS = size(X, 2);
 
 GAMMA = 0.005;
-LAMBDA = 0.1;
+LAMBDA = [0.1, 0.09];
 NUM_ITER = 2;
+REDUCER = 0.45;
 
 SVD_K = 25;
 
@@ -43,15 +44,15 @@ for niters=1:NUM_ITER
         u = triplet_matrix(row, 1);
         i = triplet_matrix(row, 2);
         r = triplet_matrix(row, 3);
-
         e_ui = r - global_mean - P(u, :)*Q(i, :)' - bias_users(u) - bias_movies(i);
-        temp1 = Q(i, :) + GAMMA * (e_ui*P(u, :) - LAMBDA*Q(i, :));
-        temp2 = P(u, :) + GAMMA * (e_ui*Q(i, :) - LAMBDA*P(u, :));
-        bias_users(u) =  bias_users(u) + GAMMA * (e_ui - LAMBDA * bias_users(u));
-        bias_movies(i) =  bias_movies(i) + GAMMA * (e_ui - LAMBDA * bias_movies(i));
+        temp1 = Q(i, :) + GAMMA * (e_ui*P(u, :) - LAMBDA(2)*Q(i, :));
+        temp2 = P(u, :) +GAMMA * (e_ui*Q(i, :) - LAMBDA(1)*P(u, :));
+        bias_users(u) =  bias_users(u) + GAMMA * (e_ui - LAMBDA(1) * bias_users(u));
+        bias_movies(i) =  bias_movies(i) + GAMMA * (e_ui - LAMBDA(2) * bias_movies(i));
         Q(i, :) = temp1;
         P(u, :) = temp2;
     end
+    GAMMA = GAMMA * REDUCER;
 end
 
 X_pred = P*Q' + global_mean + repmat(bias_users, 1, NUM_ITEMS) + repmat(bias_movies', NUM_USERS, 1);

@@ -6,11 +6,14 @@
 
 % Setup
 rand('seed', 1);  % fix random seed for reproducibility
-kfold_k = 3;
+kfold_k = 2;
 
 % Constants
+% Choose between:
+% 1. Data.mat         - Default CIL data
+% 2. Data-ml-100k.mat - MovieLens 100k data
 filename = 'Data.mat';
-prc_trn = 0.5;  % percentage of training data
+% filename = 'Data-ml-100k.mat';
 nil = 99;  % missing value indicator
 
 % Load data
@@ -22,6 +25,7 @@ idx = find(X ~= nil);
 n = numel(idx);
 
 indices = crossvalind('Kfold', n, kfold_k);
+mse_arr = zeros(kfold_k, 1);
 
 for i=1:kfold_k
     % Keep i-th set away for testing
@@ -41,6 +45,7 @@ for i=1:kfold_k
 
     % Compute MSE
     mse = sqrt(mean((X_tst(X_tst ~= nil) - X_pred(X_tst ~= nil)).^2));  % error on known test values
+    mse_arr(i) = mse;
 
     disp(['Root of Mean-squared error: ' num2str(mse)]);
 end

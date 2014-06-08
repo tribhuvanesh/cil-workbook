@@ -18,6 +18,7 @@ function [X_pred, U, V] = StandardSVD(X_pred, X, nil)
     tmp = X;
     tmp(X == nil) = 0;
     avg = ((sum(tmp, 1) ./ sum(tmp ~= 0, 1)))';
+    avg(isnan(avg)) = mean(X_pred(X_pred ~= nil));
     observed = sum(tmp ~= 0, 1)';
 
     global_average = mean(avg);
@@ -75,23 +76,19 @@ function [X_pred, U, V] = StandardSVD(X_pred, X, nil)
     s  = std(X_pred); 
     X_pred = stdize(X_pred);
     k = 11;
-    lambda = 125;
-    [U,S,V] = svd(X_pred,0);
-    I = eye(size(S,1));
-    S = S + I * lambda;
-    U = U * sqrt(S);
-    U = U(:,1:k);
-    V =  sqrt(S)* V ;
-    V = V(:,1:k);
-    V = V';
-%     for i = 1:size(X_pred,1)
-%         for j= 1:size(X_pred,2)
-%             if(X(i,j) == nil)
-%                 X_pred(i,j) = U(i,:) * V(:,j);
-%             end
-%         end
-%     end
+    lambda = 10;
+
+    [U, D, V] = svd(X_pred, 0);
+    
+    D = D + eye(size(D)) * lambda;
+    
+    U = U * sqrt(D);
+    U = U(:, 1:k);
+    V = V * sqrt(D)';
+    V = V(:, 1:k)';
+
     tmp = U * V;
+
     X_pred(X == nil) = tmp(X == nil);
     %unstandardize
     X_pred = X_pred.*repmat(s, size(X,1), 1);
@@ -99,6 +96,5 @@ function [X_pred, U, V] = StandardSVD(X_pred, X, nil)
 end
 
 function Y = stdize(X)
-    Y = zeros(size(X));
     Y = (X - repmat(mean(X),size(X,1),1))./repmat(std(X), size(X,1), 1);
 end

@@ -8,7 +8,11 @@
 rand('seed', 1);  % fix random seed for reproducibility
 
 % Constants
-filename = 'Data.mat';
+% Choose between:
+% 1. Data.mat         - Default CIL data
+% 2. Data-ml-100k.mat - MovieLens 100k data
+% filename = 'Data.mat';
+filename = 'Data-ml-100k.mat';
 prc_trn = 0.5;  % percentage of training data
 nil = 99;  % missing value indicator
 

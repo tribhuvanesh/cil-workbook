@@ -7,12 +7,15 @@
 % Setup
 rand('seed', 1);  % fix random seed for reproducibility
 
-% Constants
-% Choose between:
-% 1. Data.mat         - Default CIL data
-% 2. Data-ml-100k.mat - MovieLens 100k data
-% filename = 'Data.mat';
-filename = 'Data-ml-100k.mat';
+% Filenames for corresponding datasets
+dataset_cil = '../datasets/cil.mat';
+dataset_ml = '../datasets/DataMovieLens100k.mat';
+dataset_j1 = '../datasets/jester1.mat';
+dataset_j2 = '../datasets/jester2.mat';
+dataset_j3 = '../datasets/jester3.mat';
+
+filename = dataset_cil;
+
 prc_trn = 0.5;  % percentage of training data
 nil = 99;  % missing value indicator
 

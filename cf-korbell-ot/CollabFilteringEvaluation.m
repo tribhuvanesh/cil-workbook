@@ -16,7 +16,7 @@ dataset_j3 = '../datasets/jester3.mat';
 
 filename = dataset_cil;
 
-prc_trn = 0.5;  % percentage of training data
+prc_trn = 0.8;  % percentage of training data
 nil = 99;  % missing value indicator
 
 % Load data

@@ -1,8 +1,8 @@
-function X_pred = PredictMissingValues(X, nil)
+function X_pred = PredictMissingValues(X, nil, s)
 % Predict missing entries in matrix X based on known entries. Missing
 % values in X are denoted by the special constant value nil.
 
-KMEANS_K = 18;
+KMEANS_K = s.KMEANS_K;
 
 %% 0. Preprocessing
 % a. Calculate the mean of all observed ratings
@@ -24,11 +24,12 @@ for i=1:size(X_mean_imputed, 1)
     % X_for_kmeans(i, :) = X_mean_imputed(i, :) - X_pred_avg(i);
 end
 
-%% K-means and SVD
+%% K-means
 % Apply k-means to cluster similar users
-kmeans_idx = kmeans(X_mean_imputed, KMEANS_K);
+opts = statset('MaxIter',s.MAX_ITER);
+kmeans_idx = kmeans(X_mean_imputed, KMEANS_K, 'Options', opts);
 
-% For each cluster, perform SVD and impute missing values
+% For each cluster, replace missing values by the average rating in that cluster
 for i=1:KMEANS_K
     % Obtain all users belonging to cluster i
     X_org_k = X(kmeans_idx == i, :);
@@ -36,7 +37,11 @@ for i=1:KMEANS_K
     
     % Obtain average rating of each item/column in this cluster
     % Repeat to form matrix of size X_org_k
-    X_mean_rating_k = repmat(mean(X_mean_imputed_k), size(X_org_k, 1), 1);
+    X_mean_rating_k = repmat(mean(X_mean_imputed_k, 1), size(X_org_k, 1), 1);
+    
+%     size(X_org_k)
+%     size(X_mean_imputed_k)
+%     size(X_mean_rating_k)
     
     % Replace unknown ratings with imputed ratings
     X_org_k(X_org_k == nil) = X_mean_rating_k(X_org_k == nil);

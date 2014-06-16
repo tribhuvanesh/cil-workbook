@@ -10,48 +10,20 @@ s = struct;
 
 % Parameters for KFold
 s.kfold_k = 5;
-s.dataset = '../datasets/cil.mat';
-s.comments = '4.1364 in 12secs - CIL - svd_k=11 - lab';
-s.SAVE_FILENAME = 'korbell-ot-lab-star-cil-svd_k11.mat';
+s.dataset = '../datasets/jester1.mat';
+s.comments = 'svd - jes1 - lab';
+s.SAVE_FILENAME = 'svd-lab-star-jes1.mat';
 
 %% CIL best params
-% Parameters for StandardSVD
-s.BR = 10;
-s.SVD_K = 11;
-s.SVD_LAMBDA = 10;
+% s.SVD_K = 5;
 
-% Parameters for PredictMissingValues
-s.PRC_TRN = 0.95;
-s.GAMMA = 0.005;
-s.LAMBDA = [0.1, 0.09];
-s.NUM_PASSES = 5; 
-s.REDUCER = 0.35;
 
 %% ML100 Best params
-% % Parameters for StandardSVD
-% s.BR = 10;
-% s.SVD_K = 10;
-% s.SVD_LAMBDA = 10;
-% 
-% % Parameters for PredictMissingValues
-% s.PRC_TRN = 1.0;
-% s.GAMMA = 0.02;
-% s.LAMBDA = [0.4, 0.2];
-% s.NUM_PASSES = 3;
-% s.REDUCER = 0.35;
+% s.SVD_K = 11;
+
 
 %% JES1 Best params
-% % Parameters for StandardSVD
-% s.BR = 10;
-% s.SVD_K = 11;
-% s.SVD_LAMBDA = 10;
-% 
-% % Parameters for PredictMissingValues
-% s.PRC_TRN = 1.0;
-% s.GAMMA = 0.01;
-% s.LAMBDA = [0.2, 0.04];
-% s.NUM_PASSES = 3;
-% s.REDUCER = 0.35;
+s.SVD_K = 6;
 
 %% Rest
 
@@ -118,13 +90,8 @@ if ENABLE_FILE_SAVES
     if exist(SAVE_FILENAME, 'file') == 2
         temp = load(SAVE_FILENAME);
         
-        if isfield(temp, 'mse_arr')
-            mse_prev = temp.mse_arr;
-        end
-        
-        if isfield(temp, 'run_time_arr')
-            run_time_prev = temp.run_time_arr;
-        end        
+        mse_prev = temp.mse_arr;
+        run_time_prev = temp.run_time_arr;
                 
         mse_arr = [mse_prev mse_arr];
         run_time_arr = [run_time_prev run_time_arr];

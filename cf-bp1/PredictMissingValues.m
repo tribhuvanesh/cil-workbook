@@ -1,9 +1,9 @@
-function X_pred = PredictMissingValues(X, nil)
+function X_pred = PredictMissingValues(X, nil, s)
 % Predict missing entries in matrix X based on known entries. Missing
 % values in X are denoted by the special constant value nil.
 
 %% Parameters
-k = 5;
+SVD_K = s.SVD_K;
 
 %% 0. Preprocessing
 % a. Calculate the mean of all observed ratings
@@ -28,12 +28,12 @@ end
 
 [U, D, V] = svd(X_mean_imputed, 0);
 
-U_trunc = U(:, 1:k);
-D_trunc = D(1:k, 1:k);
-V_trunc = V(:, 1:k);
+U_trunc = U(:, 1:SVD_K);
+D_trunc = D(1:SVD_K, 1:SVD_K);
+V_trunc = V(:, 1:SVD_K);
 
-U_p = U_trunc * sqrt(D_trunc);
-V_p = sqrt(D_trunc) * V_trunc';
+% U_p = U_trunc * sqrt(D_trunc);
+% V_p = sqrt(D_trunc) * V_trunc';
 X_svd = U_trunc * D_trunc * V_trunc';
 
 

@@ -1,72 +1,37 @@
 function [ ] = CollabFilteringEvaluationKFoldFunc( s )
-%COLLABFILTERINGEVALUATIONKFOLDFUNC Summary of this function goes here
-%   Detailed explanation goes here
-
-%     %% Experimental configuration
+%COLLABFILTERINGEVALUATIONKFOLDFUNC Runs KFold for SGD-SVD given the model
+% parameters in struct 's'
+%   This function initiates a K-Fold cross validation and stores
+%   experimental observed data using the GoldenBrown
+%   SGD-SVD algorithm, whose parameters are set in struct s. These
+%   parameters, along with their default values are:
+%   1. K-Fold parameters
+%     kfold_k = 5;
+%     dataset = '../datasets/cil.mat';
 % 
-%     s = struct;
+%   2. StandardSVD Parameters
+%     BR = 10;
+%     SVD_K = 11;
+%     SVD_LAMBDA = 10;
 % 
-%     % Parameters for KFold
-%     s.kfold_k = 5;
-%     s.dataset = '../datasets/cil.mat';
-%     s.comments = '4.1364 in 12secs - CIL - svd_k=11 - lab';
-%     s.SAVE_FILENAME = 'korbell-ot-lab-star-cil-svd_k11.mat';
-% 
-%     %% CIL best params
-%     % Parameters for StandardSVD
-%     s.BR = 10;
-%     s.SVD_K = 11;
-%     s.SVD_LAMBDA = 10;
-% 
-%     % Parameters for PredictMissingValues
-%     s.PRC_TRN = 0.95;
-%     s.GAMMA = 0.005;
-%     s.LAMBDA = [0.1, 0.09];
-%     s.NUM_PASSES = 5; 
-%     s.REDUCER = 0.35;
-
-    %% ML100 Best params
-    % % Parameters for StandardSVD
-    % s.BR = 10;
-    % s.SVD_K = 10;
-    % s.SVD_LAMBDA = 10;
-    % 
-    % % Parameters for PredictMissingValues
-    % s.PRC_TRN = 1.0;
-    % s.GAMMA = 0.02;
-    % s.LAMBDA = [0.4, 0.2];
-    % s.NUM_PASSES = 3;
-    % s.REDUCER = 0.35;
-
-    %% JES1 Best params
-    % % Parameters for StandardSVD
-    % s.BR = 10;
-    % s.SVD_K = 11;
-    % s.SVD_LAMBDA = 10;
-    % 
-    % % Parameters for PredictMissingValues
-    % s.PRC_TRN = 1.0;
-    % s.GAMMA = 0.01;
-    % s.LAMBDA = [0.2, 0.04];
-    % s.NUM_PASSES = 3;
-    % s.REDUCER = 0.35;
-
-    %% Rest
+%   3. PredictMissingValues Parameters
+%     PRC_TRN = 0.95;
+%     GAMMA = 0.005;
+%     LAMBDA = [0.1, 0.09];
+%     NUM_PASSES = 5; 
+%     REDUCER = 0.35;
+%
+%   4. Others
+%     SAVE_FILENAME
+%     comments
 
     % Setup
-    % rand('seed', 1);  % fix random seed for reproducibility
+    % rand('seed', 1);  % Uncomment when reproducibility it required
     kfold_k = s.kfold_k;
     comments = s.comments;
 
     ENABLE_FILE_SAVES = 1;
     SAVE_FILENAME = s.SAVE_FILENAME;
-
-    % Filenames for corresponding datasets
-    dataset_cil = '../datasets/cil.mat';
-    dataset_ml = '../datasets/DataMovieLens100k.mat';
-    dataset_j1 = '../datasets/jester1.mat';
-    dataset_j2 = '../datasets/jester2.mat';
-    dataset_j3 = '../datasets/jester3.mat';
 
     filename = s.dataset;
     nil = 99;  % missing value indicator
@@ -97,7 +62,7 @@ function [ ] = CollabFilteringEvaluationKFoldFunc( s )
         X_tst = ones(size(X))*nil;
         X_tst(idx_tst) = X(idx_tst);  % add known training values
 
-        % Predict the missing values here!
+        % Predict the missing values here. Also, time it.
         tic
         X_pred = PredictMissingValues(X_trn, nil, s);
         run_time_arr(i) = toc;

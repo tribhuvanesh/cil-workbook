@@ -42,7 +42,9 @@ s.REDUCER = 0.35;
 
 %% SVD_K experiment
 svd_k = [5 11 15 25 50 0];
+fprintf('Effect of parameter: SVD_K\n');
 for i=1:numel(svd_k)
+    fprintf('\nSVD_K with K=%d\n', svd_k(i));
     for j=1:EXPT_TIMES
         s.SVD_k = svd_k(i);
         s.comments = sprintf('4.1364 in 12secs - CIL - svd_k=%d - lab', svd_k(i));
@@ -56,8 +58,10 @@ for i=1:numel(svd_k)
 end
 
 %% Gamma experiment
+fprintf('\nEffect of parameter: Gamma\n');
 gamma = [0.001 0.005 0.01 0.02];
 for i=1:numel(gamma)
+    fprintf('\nGamma = %f\n', gamma(i));
     s.comments = sprintf('4.1364 in 12secs - CIL - gamma=%d - lab', gamma(i));
     s.SAVE_FILENAME = sprintf('korbell-ot-lab-star-cil-gamma%d.mat', gamma(i)*1000);
     disp(s.SAVE_FILENAME);
@@ -71,8 +75,10 @@ for i=1:numel(gamma)
 end    
 
 %% Reducer experiment
+fprintf('\nEffect of parameter: Reducer\n');
 reducer = [0.1 0.35 0.5 0.75 1.0];
 for i=1:numel(reducer)
+    fprintf('\nReducer = %f\n', reducer(i));
     s.comments = sprintf('4.1364 in 12secs - CIL - reducer=%d - lab', reducer(i));
     s.SAVE_FILENAME = sprintf('korbell-ot-lab-star-cil-reducer%d.mat', reducer(i)*100);
     disp(s.SAVE_FILENAME);
@@ -86,8 +92,10 @@ for i=1:numel(reducer)
 end  
 
 %% BlendRatio experiment
+fprintf('\nEffect of parameter: BlendingRatio\n')
 br = [5 10 25 50 0];
 for i=1:numel(br)
+    fprintf('\nBlendingRatio = %d\n', br(i));
     s.comments = sprintf('4.1364 in 12secs - CIL - br=%d - lab', br(i));
     s.SAVE_FILENAME = sprintf('korbell-ot-lab-star-cil-br%d.mat', br(i));
     disp(s.SAVE_FILENAME);
